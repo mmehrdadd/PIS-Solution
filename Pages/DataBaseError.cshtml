@@ -1,0 +1,17 @@
+﻿@page
+@model PIS_Web.Pages.DataBaseErrorModel
+@{
+}
+<div class="text-center" lang="fa" dir="rtl">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+	{
+		<div class="alert alert-danger text-center">
+			@Model.ErrorMessage
+		</div>
+	}
+	<br />
+	<h1 class="text-center text-danger">اتصال به پایگاه داده برقرار نشد.</h1>
+	<ul>
+		<li><a asp-page="/CRM/ticketList"></a></li>
+</ul>
+</div>

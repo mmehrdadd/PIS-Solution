@@ -1,0 +1,20 @@
+﻿@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+	{
+		<div class="alert alert-danger text-center">
+			@Model.ErrorMessage
+		</div>
+	}
+	<div>
+		<br />
+	</div>
+	<div>
+        <img class="display-6 img-fluid" style="background-color: #F1F0E8;position: relative;border-radius: 8px;border: 1px solid #ddd;box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);" src="Resources/pismenu.png" alt="Alternate Text" />
+	</div>
+</div>

@@ -1,0 +1,281 @@
+﻿@page "{TicketSN:decimal}"
+@model PIS_Web.Pages.CRM.TicketInDetailModel
+@{
+}
+@if (!Model.ticketSN.Equals(null))
+{
+	<div class="container-fluid" dir="rtl" lang="fa">
+		@if (!string.IsNullOrEmpty(Model.errorMessage))
+		{
+			<div class="alert alert-danger text-center">
+				@Model.errorMessage
+			</div>
+		}
+		<div class="toolbar bg-light p-3 mb-3">
+			<ul class="nav nav-tabs">
+				<li class="nav-item">
+					<a class="nav-link active" asp-page="/CRM/AddTicketForm">ثبت تیکت‌</a>
+				</li>
+				@* <li class="nav-item">
+					<a class="nav-link" asp-page="/TicketList">درج پیوست‌</a>
+				</li> *@
+				@if (User.IsInRole("Admin") || User.IsInRole("User"))
+				{
+					<li class="nav-item">
+						<a class="nav-link" asp-page="/CRM/TicketList">لیست تیکت‌ها</a>
+					</li>
+				}
+				@if (User.IsInRole("Admin") || User.IsInRole("User"))
+				{
+					@* <li class="nav-item">
+						<a class="nav-link" asp-page="/CRM/TicketDtl">چت های تیکت</a>
+					</li> *@
+				}
+			</ul>
+		</div>
+
+			<div class="card mb-3">
+				<div class="card-header">
+					<h5>جزئیات تیکت</h5>
+				</div>
+				<div class="card-body">
+					@* <form method="post"> *@
+					<div class="row">
+						<!-- Left Column -->
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="TicketNo" class="form-label">کد تیکت:</label>
+								<input id="TicketNo" name="TicketNo" class="form-control" disabled value="@((Model.Ticket.TicketNo != null) ? Model.Ticket.TicketNo : string.Empty)" />
+							</div>
+							<div class="mb-3">
+								<label for="HostName" class="form-label">درخواست کننده:</label>
+								<input id="HostName" name="HostName" class="form-control" value="@User.Identity.Name" disabled />
+							</div>
+							<div class="mb-3">
+								<label for="ApplicationSN" class="form-label">سیستم:</label>
+								<select id="ApplicationSN" name="ApplicationSN" class="form-control" disabled>
+									@if (Model.subSystems != null)
+									{
+										@foreach (var system in Model.subSystems)
+										{
+
+											@if (Model.Ticket != null && Model.Ticket.ApplicationSN == system.ApplicationSN)
+											{
+												<option value="@system.ApplicationSN" selected>@system.FarsiName</option>
+											}
+											else
+											{
+												<option value="@system.ApplicationSN">@system.FarsiName</option>
+											}
+
+
+										}
+									}
+								</select>
+							</div>
+							<div class="mb-3">
+								<label for="TicketDs" class="form-label">شرح تیکت:</label>
+								<textarea disabled rows="5" id="TicketDs" name="TicketDs" class="form-control">@((Model.Ticket.TicketDs != null) ? Model.Ticket.TicketDs : string.Empty)</textarea>
+							</div>
+
+						</div>
+
+						<!-- Right Column -->
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="StatusSN" class="form-label">وضعیت رکورد:</label>
+								<select id="StatusSN" name="StatusSN" class="form-control" disabled>
+									@if (Model.recordStatus != null)
+									{
+										@foreach (var status in Model.recordStatus)
+										{
+											if (!Model.Ticket.TicketSN.Equals(null) && Model.Ticket.StatusSN == status.GeneralStatusDtlSN)
+											{
+												<option value="@status.GeneralStatusDtlSN" selected>@status.GeneralStatusDtlDs</option>
+											}
+											else
+											{
+												<option value="@status.GeneralStatusDtlSN">@status.GeneralStatusDtlDs</option>
+											}
+
+										}
+									}
+
+								</select>
+							</div>
+							<div class="mb-3">
+								<label for="PrioritySN" class="form-label">نوع اولویت:</label>
+								<select id="PrioritySN" name="PrioritySN" class="form-control" disabled>
+									@if (Model.priorities != null)
+									{
+										@foreach (var priority in Model.priorities)
+										{
+											if (Model.Ticket.PrioritySN != null && Model.Ticket.PrioritySN == priority.GeneralStatusDtlSN)
+											{
+												<option value="@priority.GeneralStatusDtlSN" selected>@priority.GeneralStatusDtlDs</option>
+											}
+											else
+											{
+												<option value="@priority.GeneralStatusDtlSN">@priority.GeneralStatusDtlDs</option>
+											}
+										}
+									}
+								</select>
+							</div>
+							<div class="mb-3">
+								<label for="TicketTypeSN" class="form-label">روش ثبت تیکت:</label>
+								<select id="TicketTypeSN" name="TicketTypeSN" class="form-control" disabled>
+									@if (Model.ticketType != null)
+									{
+										@foreach (var type in Model.ticketType)
+										{
+											if (Model.Ticket.TicketTypeSN != null && Model.Ticket.TicketTypeSN == type.GeneralStatusDtlSN)
+											{
+												<option value="@type.GeneralStatusDtlSN" selected>@type.GeneralStatusDtlDs</option>
+											}
+											else
+											{
+												<option value="@type.GeneralStatusDtlSN">@type.GeneralStatusDtlDs</option>
+											}
+										}
+									}
+								</select>
+							</div>
+							<div class="mb-3">
+								<label for="ProblemSN" class="form-label">گروه مشکل:</label>
+								<select id="ProblemSN" name="ProblemSN" class="form-control" disabled>
+									@if (Model.problem != null)
+									{
+										<option></option>
+										@foreach (var problem in Model.problem)
+										{
+											<option value="@problem.ProblemSN" selected>@problem.ProblemDs</option>
+
+										}
+									}
+								</select>
+							</div>
+							<div class="control-group pb-4">
+								<label class="control-label" for="TicketDate">تاریخ تیکت</label>
+								<div class="controls">
+									<input id="TicketDate" name="TicketDate" value="@((Model.Ticket.TicketDate != null) ? Model.Ticket.TicketDate : Model.ticketDate)" type="text" disabled>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		<div class="card mb-3 frm container-fluid overflow-auto">
+			<table class="card-body table table-hover " id="ticketsTable">
+				<thead>
+					<tr>
+						@if (User.IsInRole("Admin"))
+						{
+							<th>سریال پیوست</th>
+						}
+						<th>نام پیوست</th>
+						<th>شرح پیوست</th>
+						<th>تاریخ پیوست</th>
+						<th></th>
+						<th></th>
+						<th></th>
+
+					</tr>
+				</thead>
+				<tbody>
+					@if (Model.Attachments.Any())
+					{
+						foreach (var attachment in Model.Attachments)
+						{
+							if (attachment.TicketDtlSN == null)
+							{
+								<tr>
+									@if (User.IsInRole("Admin"))
+									{
+										<td>@attachment.TicketAttachmentSN</td>
+									}
+									<td>@attachment.FileName</td>
+									<td>@attachment.AttachDes</td>
+									<td>@attachment.AttachDate</td>
+
+									<form method="post">
+										<td> <button onclick="return confirm('پیوست دانلود شود؟');" class="btn-outline-primary" asp-page-handler="DownloadFile" asp-route-AttachmentSN="@attachment.TicketAttachmentSN"><i class="fa fa-paperclip" style="font-size:24px; position:relative;"></i></button></td>
+									</form>
+								</tr>
+							}
+
+						}
+					}
+					else
+					{
+						<tr><td>اطلاعاتی جهت نمایش وجود ندارد</td></tr>
+					}
+				</tbody>
+			</table>
+			</div>
+		
+		<div class="card mb-3">
+			<form method="post" enctype="multipart/form-data">
+				<div class="card-body">
+					<div class="row">
+						<div class="card-header mb-3">
+							<h5>چت جدید</h5>
+						</div>
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="TicketDs" class="form-label">متن پیام:</label>
+								<textarea rows="5" id="TicketDs" name="MessageBody" class="form-control"></textarea>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="UploadedFile" class="form-label">پیوست‌:</label>
+								<input type="file" id="UploadedFile" name="UploadedFile" class="form-control" />
+							</div>
+						</div>
+					</div>
+					<div class="p-4">
+						<button asp-page-handler="AddTicketDtl" class="btn btn-success" type="submit">ارسال</button>
+					</div>
+					<div class="card-header mb-4">
+						<h5>چت های تیکت</h5>
+					</div>
+					@foreach (var dtl in Model.TicketDtls)
+					{
+						<div class="col-md-12 form-label">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+								<path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+							</svg> @dtl.UserID_Name
+							<div class="card-body">
+								
+								<div class="row">
+									<div>
+										<form method="post" style="position:relative; ">
+											<textarea style="width:60%;" disabled rows="5">@dtl.MessageBody</textarea>
+											@foreach (var attachments in Model.Attachments)
+											{
+												if (attachments.TicketDtlSN == dtl.TicketDtlSN)
+												{
+													<button asp-page-handler="DownloadFile" asp-route-AttachmentSN="@attachments.TicketAttachmentSN" style="font-size:24px;position:relative; bottom:100px;" class="btn"> <i class="fa fa-paperclip"></i></button>
+												}
+											}
+										</form>
+										
+									</div>
+																			
+								</div>
+								
+							</div>
+							
+						</div>						
+						
+					}
+				</div>	
+			</form>
+			
+		</div>
+		
+	</div>
+	
+}

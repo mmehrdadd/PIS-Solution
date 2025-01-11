@@ -1,0 +1,105 @@
+﻿@page
+@model AddTicketDtlModel
+@{
+}
+<div class="container-fluid" dir="rtl" lang="fa">
+	<!-- Toolbar -->
+	@if (!string.IsNullOrEmpty(Model.errorMessage))
+	{
+		<div class="alert alert-danger text-center">
+			@Model.errorMessage
+		</div>
+	}
+	<div class="toolbar bg-light p-3 mb-3">
+		<ul class="nav nav-tabs">
+			<li class="nav-item">
+				<a class="nav-link " href="#">ثبت تیکت‌</a>
+			</li>
+
+			@if (User.IsInRole("Admin") || User.IsInRole("User"))
+			{
+				<li class="nav-item">
+					<a class="nav-link" asp-area="" asp-page="/CRM/TicketList">لیست تیکت‌ها</a>
+				</li>
+			}
+			@if (User.IsInRole("Admin") || User.IsInRole("User"))
+			{
+				@* <li class="nav-item">
+					<a class="nav-link active" asp-area="" asp-page="/CRM/TicketDtl">چت های تیکت</a>
+				</li> *@
+			}
+		</ul>
+	</div>
+	
+	<!-- Detail Panel -->
+	<form method="post" enctype="multipart/form-data">
+		<div class="card mb-3 frm">
+			<div class="card-header">
+				<h5>جزئیات تیکت</h5>
+			</div>
+			<div class="card-body">
+				@* <form method="post"> *@
+				<div class="row">
+					<!-- Left Column -->
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label for="ApplicationSN" class="form-label">انتخاب تیکت</label>
+							<select id="" name="TicketSN" class="form-control Select2">
+								@if (Model.Tickets != null)
+								{
+									<option></option>
+									if (User.IsInRole("Admin"))
+									{
+										@foreach (var tickets in Model.Tickets)
+										{
+											<option value="@tickets.TicketSN">@tickets.TicketDs</option>
+										}
+									}
+								}	
+								@if (Model.TicketViews != null)
+								{
+									<option></option>
+									if (User.IsInRole("User"))
+									{
+										@foreach (var tickets in Model.TicketViews)
+										{
+											<option value="@tickets.TicketSN">@tickets.TicketDs</option>
+										}
+									}
+								}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="TicketDs" class="form-label">متن پیام:</label>
+							<textarea class="form-control" rows="5" for="MessageBody" id="TicketDs" name="MessageBody"></textarea>
+						</div>
+					</div>
+					<!-- Right Column -->
+					@if (User.IsInRole("Admin"))
+					{
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="StatusSN" class="form-label">انتخاب کارشناس</label>
+								<select id="" name="ExpertUserSN" class="form-control Select2">
+									@if (Model.Experts != null)
+									{
+										<option></option>
+										@foreach (var experts in Model.Experts)
+										{
+											<option value="@experts.UserSN">@experts.UserName</option>
+
+										}
+									}
+								</select>
+							</div>
+						</div>
+					}					
+				</div>
+			</div>
+			<div class="p-4">
+				<button class="btn btn-success" type="submit">ثبت پیام</button>
+				<button class="btn btn-danger" asp-page-handler="Reset">لغو</button>
+			</div>
+		</div>
+	</form>
+</div>

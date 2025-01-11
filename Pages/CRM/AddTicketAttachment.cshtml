@@ -1,0 +1,199 @@
+﻿@page "{TicketSN:decimal}"
+@model AddTicketAttachmentModel
+@{
+}
+<div class="container-fluid" dir="rtl" lang="fa">
+	<!-- Toolbar -->
+	@if (!string.IsNullOrEmpty(Model.errorMessage))
+	{
+		<div class="alert alert-danger text-center">
+			@Model.errorMessage
+		</div>
+	}
+	<div class="toolbar bg-light p-3 mb-3">
+		<ul class="nav nav-tabs">
+			<li class="nav-item">
+				<a class="nav-link" asp-page="/CRM/AddTicketForm">ثبت تیکت‌</a>
+			</li>
+			@* <li class="nav-item">
+				<a onclick="fsa()" class="nav-link active" asp-page="/AddTicketAttachment">درج پیوست</a>
+				
+			</li> *@
+			@if (User.IsInRole("Admin") || User.IsInRole("User") )
+			{
+				<li class="nav-item">
+					<a class="nav-link" asp-area="" asp-page="/CRM/TicketList">لیست تیکت‌ها</a>
+				</li>
+			}
+			@if (User.IsInRole("Admin") || User.IsInRole("User"))
+			{
+				@* <li class="nav-item">
+					<a class="nav-link" asp-area="" asp-page="/CRM/TicketDtl">چت های تیکت</a>
+				</li> *@
+			}
+		</ul>
+	</div>
+	<div class="card overflow-auto mb-2">
+		<table class="card-body table table-hover" id="ticketsTable">
+			<thead>
+				<tr>
+					@if (User.IsInRole("Admin"))
+					{
+						<th>سریال تیکت</th>
+					}
+					<th>شماره تیکت</th>
+					<th>توضیحات تیکت</th>
+					<th>تاریخ تیکت</th>
+					<th>ساعت تیکت</th>
+					<th>درخواست کننده</th>
+					<th>نوع تیکت</th>
+					<th>الویت</th>
+					<th>وضعیت</th>
+					<th>سیستم</th>
+					<th>IsClosed</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				@if (Model.Ticket != null)
+				{
+					<tr>
+						@if (User.IsInRole("Admin"))
+						{
+							<td>@Model.Ticket.TicketSN</td>
+						}
+						<td>@Model.Ticket.TicketNo</td>
+						<td>@Model.Ticket.TicketDs</td>
+						<td>@Model.Ticket.TicketDate</td>
+						<td>@Model.Ticket.TicketTime</td>
+						<td>@Model.Ticket.TicketUserName</td>
+						<td>@Model.Ticket.TicketTypeDs</td>
+						<td>@Model.Ticket.PriorityDs</td>
+						<td>@Model.Ticket.StatusDs</td>
+						<td>@Model.Ticket.ApplicationDs</td>
+						<td>@Model.Ticket.IsClosed</td>
+
+					</tr>
+				}
+				else
+				{
+				<td>اطلاعاتی جهت نمایش وجود ندارد</td>
+				}
+			</tbody>
+		</table>
+	</div>
+	<div class="card overflow-auto mb-2">
+		<table class="card-body table table-hover" id="ticketsTable">
+			<thead>
+				<tr>
+					@if (User.IsInRole("Admin"))
+					{
+						<th>سریال پیوست</th>
+					}
+					<th>نام پیوست</th>
+					<th>شرح پیوست</th>
+					<th>تاریخ پیوست</th>
+					<th></th>
+					<th></th>
+					<th></th>
+
+				</tr>
+			</thead>
+			<tbody>
+				@if (Model.TicketAttachments != null && Model.TicketAttachments.Count() > 0)
+				{
+					foreach (var attachment in Model.TicketAttachments)
+					{
+						<tr>
+							@if (User.IsInRole("Admin"))
+							{
+								<td>@attachment.TicketAttachmentSN</td>
+							}
+							<td>@attachment.FileName</td>
+							<td>@attachment.AttachDes</td>
+							<td>@attachment.AttachDate</td>
+
+							<form method="post">
+							<td> <button onclick="return confirm('پیوست حذف شود؟');" class="btn-danger" asp-page-handler="Delete" asp-route-AttachmentSN="@attachment.TicketAttachmentSN">حذف پیوست</button> </td>
+							<td> <button onclick="return confirm('پیوست دانلود شود؟');" class="btn-outline-primary" asp-page-handler="DownloadFile" asp-route-AttachmentSN="@attachment.TicketAttachmentSN">دانلود پیوست</button></td>
+							</form>
+						</tr>
+					}
+				}
+				else
+				{
+					<tr><td>اطلاعاتی جهت نمایش وجود ندارد</td></tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<form method="post" enctype="multipart/form-data">
+		<div class="card mb-3">
+			<div class="card-header">
+				<h5>جزئیات تیکت</h5>
+			</div>
+			<div class="card-body">
+				@* <form method="post"> *@
+				<div class="row">
+					<!-- Left Column -->
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label for="SortOrder" class="form-label">ترتیب:</label>
+							<input type="number" onkeydown="return event.keyCode !== 69" id="SortOrder" name="SortOrder" class="form-control" value="0.0" />
+						</div>
+						<div class="mb-3">
+							<label for="AttachDes" class="form-label">توضیحات پیوست:</label>
+							<input id="AttachDes" name="AttachDes" class="form-control" />
+						</div>
+						<div class="mb-3">
+							<label for="AttachmentSubjectSN" class="form-label">موضوع پیوست:</label>			
+							<select class="form-control Select2" id="" name="AttachmentSubjectSN">
+								@if (Model.AttachmentSubjects != null)
+								{
+									<option></option>
+									@foreach (var subject in Model.AttachmentSubjects)
+									{
+										<option value="@subject.AttachmentSubjectSN" >@subject.AttachmentSubjectDs</option>
+									}
+								}			
+							</select>							
+						</div>						
+						@* <div class="searchable control-group mb-3">
+							<label for="AttachmentSubjectSN" class="form-label">موضوع پیوست:</label>
+							<input class="form-control" type="text" placeholder="search countries" onkeyup="filterFunction(this,event)">
+							<ul>
+								@if (Model.AttachmentSubjects != null)
+								{
+									@foreach (var subject in Model.AttachmentSubjects)
+									{
+										<li data-value="@subject.AttachmentSubjectSN">@subject.AttachmentSubjectDs</li>
+									}
+								}
+							</ul>
+						</div> *@
+						<div class="mb-3">
+							<label for="UploadedFile" class="form-label">پیوست‌:</label>
+							<input type="file" id="UploadedFile" name="UploadedFile" class="form-control" />
+						</div>
+					</div>
+
+					<!-- Right Column -->
+					<div class="col-md-6">																
+						<div class="control-group mb-3">
+							<label class="form-label" for="AttachDate">تاریخ پیوست:</label>
+							<div class="controls">
+								<input id="AttachDate" name="AttachDate" value="@Model.AttachDate" type="text" disabled>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="p-4">
+				<button class="btn btn-success" type="submit">ثبت پیوست</button>
+				<button class="btn btn-danger" asp-page-handler="Reset">لغو</button>
+			</div>
+		</div>
+	</form>
+</div>

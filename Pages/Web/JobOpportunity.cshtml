@@ -1,0 +1,149 @@
+﻿@page
+@model PIS_Web.Pages.Web.JobOpportunityModel
+@{
+}
+<div class="container-fluid" dir="rtl" lang="fa">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+	{
+		<div class="alert alert-danger text-center">
+			@Model.ErrorMessage
+		</div>
+	}
+	<div class="toolbar bg-light p-2 mb-3">
+		<ul class="nav nav-tabs">
+			<li class="nav-item">
+				<a class="nav-link active" asp-page="/Web/JobOpportunity" >درخواست شغل</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" asp-page="">فرصت شغلی</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" asp-page="/Web/JobTitle">سمت های شغلی</a>
+			</li>
+		</ul>
+	</div>
+	<div class="card mb-3 frm container-fluid overflow-auto">
+		<table class="card-body table table-hover" id="JobOpportunityTable">
+			<thead>
+				<tr>
+					<th>کد ملی</th>
+					<th>نام</th>
+					<th>نام خانوادگی</th>
+					<th>شهر</th>
+					<th>موبایل</th>
+					<th>ایمیل</th>
+					<th>نام فایل پیوست</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+					@if (Model.JobOpportunities.Count() > 0)
+					{						
+						foreach (var J in Model.JobOpportunities)
+						{
+						<tr onclick="selectJobOpportunity(this)" data-SN="@J.JobOpportunitySN">
+								
+								<td>@J.NationalID</td>
+								<td>@J.FirstName</td>
+								<td>@J.LastName</td>
+								<td>@J.CityDs</td>
+								<td>@J.Mobile</td>
+								<td>@J.Email</td>
+								<td>@J.FileName</td>
+							</tr>
+							
+						}
+						
+					}
+					else{
+					<tr><td>اطلاعاتی جهت نمایش وجود ندارد</td></tr>
+					}
+					
+					
+				
+			</tbody>
+		</table>
+		<div>
+			<ul class="pagination justify-content-center">
+				@if (Model.PageNumber > 1)
+				{
+					<li class="page-item p-1">
+						<a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)">بعدی</a>
+					</li>
+				}
+				else
+				{
+					<li class="page-item disabled p-1">
+						<a class="page-link">بعدی</a>
+					</li>
+				}
+
+				@if (Model.PageNumber < Model.TotalPages)
+				{
+					<li class="page-item p-1">
+						<a class="page-link"  asp-route-PageNumber="@(Model.PageNumber + 1)">قبلی</a>
+					</li>
+				}
+				else
+				{
+					<li class="page-item disabled p-1">
+						<a class="page-link">قبلی</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+	<form method="post" enctype="multipart/form-data">
+		<div class="card mb-3">
+			<div class="card-header">
+				<h5> درخواست شغل جدید</h5>
+			</div>
+			<div class="card-body">
+				<div class="row" id="input-fields">
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label for="NationalID" class="form-label">کد ملی:</label>
+							<input id="NationalID" name="NationalID" class="form-control" />
+						</div>
+						<div class="mb-3">
+							<label for="FirstName" class="form-label">نام:</label>
+							<input id="FirstName" name="FirstName" class="form-control" />
+						</div>
+						<div class="mb-3">
+							<label for="LastName" class="form-label">نام خانوادگی:</label>
+							<input id="LastName" name="LastName" class="form-control" />
+						</div>
+						<div class="mb-3">
+							<label for="CityDs" class="form-label">شهر:</label>
+							<input id="CityDs" name="CityDs" class="form-control" />
+						</div>			
+					</div>
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label for="Email" class="form-label">ایمیل الکترونیک:</label>
+							<input id="Email" name="Email" class="form-control" />
+						</div>
+						<div class="mb-3">
+							<label for="Mobile" class="form-label">شماره موبایل:</label>
+							<input type="number" id="Mobile" name="Mobile" class="form-control" />
+						</div>
+						<div class="mb-3">
+							<label for="UploadedFile" class="form-label">انتخاب پیوست:</label>
+							<input type="file" id="UploadedFile" name="UploadedFile" class="form-control" />
+						</div>
+						<div class="mb-3">
+							<input type="hidden" id="selectedSN" name="SelectedSN" class="form-control" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="p-4">
+				<button class="btn btn-success" type="submit" onclick="emptyAllFields()" asp-page-handler="New"> ثبت درخواست جدید</button>
+				<button class="btn btn-success" asp-page-handler="Edit" type="submit">ویرایش درخواست</button>
+				<button class="btn btn-danger" asp-page-handler="Reset">لغو</button>
+			</div>
+		</div>
+
+	</form>
+</div>
+

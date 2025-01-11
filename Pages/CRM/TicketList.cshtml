@@ -1,0 +1,135 @@
+﻿@page "{pageNumber:int?}"
+@model TicketsModel
+@{
+	ViewData["Title"] = "Tickets List";
+}
+<script src="~/js/site.js"></script>
+<div class="container-fluid frm" dir="rtl" lang="fa">
+	<!-- Toolbar -->
+	@if (!string.IsNullOrEmpty(Model.errorMessage))
+	{
+		<div class="alert alert-danger text-center">
+			@Model.errorMessage
+		</div>
+	}
+	<div class="toolbar bg-light p-3 mb-3">
+		<ul class="nav nav-tabs">
+			<li class="nav-item">
+				<a class="nav-link" asp-page="/CRM/AddTicketForm">ثبت تیکت‌</a>
+			</li>
+			@* <li class="nav-item">
+				<form method="post">
+					<button class="nav-link" asp-page="/TicketList">درج پیوست</button>
+				</form>
+			</li> *@
+			<li class="nav-item">
+				<a class="nav-link active" asp-area="" asp-page="/CRM/ticketList">لیست تیکت‌ها</a>
+			</li>
+			@if (User.IsInRole("Admin") || User.IsInRole("User"))
+			{
+				@* <li class="nav-item">
+					<a class="nav-link" asp-area="" asp-page="/CRM/TicketDtl">چت های تیکت</a>
+				</li> *@
+			}
+		</ul>
+	</div>
+</div>
+
+	<div style="padding:24px;" class="card mb-3 frm container-fluid overflow-auto" dir="rtl" lang="fa">
+		
+		<table class="card-body table table-hover" id="ticketsTable">
+			<thead>
+				<tr>
+					@if (User.IsInRole("Admin"))
+					{
+						<th>سریال تیکت</th>
+					}
+					<th>شماره تیکت</th>
+					<th>توضیحات تیکت</th>
+					<th>تاریخ تیکت</th>
+					<th>ساعت تیکت</th>
+					<th>IsClosed</th>
+
+				</tr>
+			</thead>
+			<tbody>
+					@if (Model.Tickets.Count() != 0)
+					{
+						
+						@foreach (var ticket in Model.Tickets)
+						{
+					<tr asp-page="/CRM/TicketInDetail" asp-route-id="@ticket.TicketSN" onclick="selectRow(this);" data-ticket-id="@ticket.TicketSN">
+								@if (User.IsInRole("Admin"))
+								{
+									<td>@ticket.TicketSN</td>
+								}
+								<td>@ticket.TicketNo</td>
+								<td>@ticket.TicketDs</td>
+								<td>@ticket.TicketDate</td>
+								<td>@ticket.TicketTime</td>
+								<td>@ticket.IsClosed</td>
+
+							</tr>
+						}
+					}
+					else
+					{
+						<tr><td>اطلاعاتی جهت نمایش وجود ندارد</td></tr>
+					}
+				</tbody>
+				
+		</table>
+		<div>
+		@* <div class="search-container">
+			<form action="/action_page.php">
+				<input type="text" placeholder="جستجو.." name="search">
+				<button asp-page-handler="" type="submit"><i class="fa fa-search"></i></button>
+			</form>
+		</div> *@
+			<ul class="pagination justify-content-center">
+				@if (Model.pageNumber > 1)
+				{
+					<li class="page-item p-1">
+						<a class="page-link"  asp-route-pageNumber="@(Model.pageNumber - 1)">بعدی</a>
+					</li>
+				}
+				else
+				{
+					<li class="page-item disabled p-1">
+						<a class="page-link">بعدی</a>
+					</li>
+				}
+
+				@if (Model.pageNumber < Model.TotalPages)
+				{
+					<li class="page-item p-1">
+						<a class="page-link" asp-route-pageNumber="@(Model.pageNumber + 1)">قبلی</a>
+					</li>
+				}
+				else
+				{
+					<li class="page-item disabled p-1">
+						<a class="page-link">قبلی</a>
+					</li>
+				}
+			</ul>
+		</div>
+		</div>
+	
+	
+<div dir="rtl">
+	<form method="post" class="mb-3">
+		@if (User.IsInRole("Admin"))
+		{
+			@* <button onclick="return confirm('تیکت حذف شود؟');" asp-page-handler="Delete" class="btn btn-danger">حذف تیکت</button> *@
+		}
+		@* <button asp-page-handler="Edit"  class="btn btn-primary">ویرایش تیکت</button> *@
+		<button asp-page-handler="Attach"  class="btn btn-primary">  پیوست های تیکت</button>
+		<button asp-page-handler="View"  class="btn btn-primary"> مشاهده تیکت</button>
+		<input class="text-xl-end" type="hidden" id="selectedSN" name="SelectedSN" />
+	</form>
+	
+</div>
+	
+
+

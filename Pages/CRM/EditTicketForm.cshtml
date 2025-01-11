@@ -1,0 +1,212 @@
+﻿@page "{TicketSN:decimal}"
+@model EditTicketFormModel
+@{
+	ViewData["Title"] = "Edit Ticket";
+}
+@if (!Model.ticketSN.Equals(null))
+{
+	<div class="container-fluid" dir="rtl" lang="fa">
+	@if (!string.IsNullOrEmpty(Model.errorMessage))
+	{
+		<div class="alert alert-danger text-center">
+			@Model.errorMessage
+		</div>
+	}
+		<div class="toolbar bg-light p-3 mb-3">
+			<ul class="nav nav-tabs">
+				<li class="nav-item">
+					<a class="nav-link active" asp-page="/CRM/AddTicketForm">ثبت تیکت‌</a>
+				</li>
+				@* <li class="nav-item">
+					<a class="nav-link" asp-page="/TicketList">درج پیوست‌</a>
+				</li> *@
+				@if (User.IsInRole("Admin") || User.IsInRole("User"))
+				{
+					<li class="nav-item">
+						<a class="nav-link" asp-page="/CRM/TicketList">لیست تیکت‌ها</a>
+					</li>
+				}
+				@if (User.IsInRole("Admin") || User.IsInRole("User"))
+				{
+					@* <li class="nav-item">
+						<a class="nav-link" asp-page="/CRM/TicketDtl">چت های تیکت</a>
+					</li> *@
+				}
+			</ul>
+		</div>
+	<form method="post" enctype="multipart/form-data">
+		<div class="card mb-3">
+			<div class="card-header">
+				<h5>جزئیات تیکت</h5>
+			</div>
+			<div class="card-body">
+				@* <form method="post"> *@
+				<div class="row">
+					<!-- Left Column -->
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label for="TicketNo" class="form-label">کد تیکت:</label>
+								<input id="TicketNo" name="TicketNo" class="form-control" disabled value="@((Model.Ticket.TicketNo != null) ? Model.Ticket.TicketNo : string.Empty)" />
+						</div>
+						<div class="mb-3">
+							<label for="HostName" class="form-label">درخواست کننده:</label>
+							<input id="HostName" name="HostName" class="form-control" value="@User.Identity.Name" disabled/>
+						</div>						
+						<div class="mb-3">
+							<label for="ApplicationSN" class="form-label">سیستم:</label>
+							<select id="ApplicationSN" name="ApplicationSN" class="form-control">
+									@if (Model.subSystems != null)
+									{
+										@foreach (var system in Model.subSystems)
+										{
+
+											@if (Model.Ticket != null && Model.Ticket.ApplicationSN == system.ApplicationSN)
+											{
+												<option value="@system.ApplicationSN" selected>@system.FarsiName</option>
+											}
+											else
+											{
+												<option value="@system.ApplicationSN">@system.FarsiName</option>
+											}
+
+
+										}
+									}								
+							</select>
+						</div>
+						<div class="mb-3">
+								<label for="TicketDs" class="form-label">* 
+									.شرح تیکت:</label>
+							<textarea rows="5" id="TicketDs" name="TicketDs" class="form-control">@((Model.Ticket.TicketDs != null) ? Model.Ticket.TicketDs : string.Empty)</textarea>
+						</div>
+						
+					</div>
+
+					<!-- Right Column -->
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label for="StatusSN" class="form-label">وضعیت رکورد:</label>
+							<select id="StatusSN" name="StatusSN" class="form-control">
+									@if (Model.recordStatus != null)
+									{
+										@foreach (var status in Model.recordStatus)
+										{
+											if (!Model.Ticket.TicketSN.Equals(null) && Model.Ticket.StatusSN == status.GeneralStatusDtlSN)
+											{
+												<option value="@status.GeneralStatusDtlSN" selected>@status.GeneralStatusDtlDs</option>
+											}
+											else
+											{
+												<option value="@status.GeneralStatusDtlSN">@status.GeneralStatusDtlDs</option>
+											}
+
+										}
+									}
+								
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="PrioritySN" class="form-label">نوع اولویت:</label>
+							<select id="PrioritySN" name="PrioritySN" class="form-control">
+									@if (Model.priorities != null)
+									{
+										@foreach (var priority in Model.priorities)
+										{
+											if (Model.Ticket.PrioritySN != null && Model.Ticket.PrioritySN == priority.GeneralStatusDtlSN)
+											{
+												<option value="@priority.GeneralStatusDtlSN" selected>@priority.GeneralStatusDtlDs</option>
+											}
+											else
+											{
+												<option value="@priority.GeneralStatusDtlSN">@priority.GeneralStatusDtlDs</option>
+											}
+										}
+									}		
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="TicketTypeSN" class="form-label">روش ثبت تیکت:</label>
+							<select id="TicketTypeSN" name="TicketTypeSN" class="form-control">
+									@if (Model.ticketType != null)
+									{
+										@foreach (var type in Model.ticketType)
+										{
+											if (Model.Ticket.TicketTypeSN != null && Model.Ticket.TicketTypeSN == type.GeneralStatusDtlSN)
+											{
+												<option value="@type.GeneralStatusDtlSN" selected>@type.GeneralStatusDtlDs</option>
+											}
+											else
+											{
+												<option value="@type.GeneralStatusDtlSN">@type.GeneralStatusDtlDs</option>
+											}
+										}
+									}								
+							</select>
+						</div>
+							<div class="mb-3">
+								<label for="ProblemSN" class="form-label">گروه مشکل:</label>
+								<select id="ProblemSN" name="ProblemSN" class="form-control">
+									@if (Model.problem != null)
+									{
+										<option></option>
+										@foreach (var problem in Model.problem)
+										{
+											<option value="@problem.ProblemSN" selected>@problem.ProblemDs</option>
+											
+										}
+									}
+								</select>
+							</div>
+						<div class="control-group pb-4">
+							<label class="control-label" for="TicketDate">تاریخ تیکت</label>
+							<div class="controls">
+								<input id="TicketDate" name="TicketDate" value="@((Model.Ticket.TicketDate != null) ? Model.Ticket.TicketDate : Model.ticketDate)" type="text" disabled>
+							</div>
+						</div>
+
+						@* <div>
+							<div class="form-check">
+
+								<label class="form-check-label" for="flexCheckDefault">
+									@if (Model.Ticket.IsClosed != null && Model.Ticket.IsClosed == true)
+									{
+										<input class="form-check-input" type="checkbox" id="IsClosed" name="IsClosed" value="true" checked>
+									}
+									else
+									{
+										<input class="form-check-input" type="checkbox" id="IsClosed" name="IsClosed" value="true">
+									}
+									<input name="IsClosed" type="hidden" value="false">
+									تیکت بسته شده
+								</label>
+							</div>
+							<div class="form-check">
+
+								<label class="form-check-label" for="flexCheckChecked">
+									@if (Model.Ticket.IsSupervisorConfirm != null && Model.Ticket.IsSupervisorConfirm == true)
+									{
+										<input class="form-check-input" type="checkbox" id="IsSupervisorConfirm" name="IsSupervisorConfirm" value="true" checked>
+									}
+									else
+									{
+										<input class="form-check-input" type="checkbox" id="IsSupervisorConfirm" name="IsSupervisorConfirm" value="true">
+									}
+									<input name="IsSupervisorConfirm" type="hidden" value="false">
+									نیاز به تایید مدیر
+								</label>
+							</div>
+						</div>
+					</div> *@
+				</div>
+
+			</div>
+			<div class="p-4">
+				<button class="btn btn-success" type="submit">ثبت تیکت</button>
+				
+				<button class="btn btn-primary" asp-page-handler="Attach">درج پیوست</button>
+				<button class="btn btn-danger" asp-page-handler="Reset">لغو</button>
+			</div>
+		</div>
+	</form>
+</div>
+}
